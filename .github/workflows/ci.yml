@@ -1,0 +1,114 @@
+name: CI / CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── 1. Build & validate frontend ────────────────────────────────────────────
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: medassist/client/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --prefix medassist/client
+
+      - name: Vite build
+        run: npm run build --prefix medassist/client
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+
+  # ── 2. Validate backend syntax ──────────────────────────────────────────────
+  validate-backend:
+    name: Validate Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: medassist/server/package-lock.json
+
+      # Skip postinstall (puppeteer download) in CI — not needed for syntax check
+      - name: Install dependencies
+        run: npm ci --prefix medassist/server --ignore-scripts
+
+      - name: Syntax check — entry point
+        run: node --check medassist/server/index.js
+
+      - name: Syntax check — routes
+        run: |
+          for f in medassist/server/routes/*.js; do
+            node --check "$f" || exit 1
+          done
+
+      - name: Syntax check — services & agents
+        run: |
+          for f in medassist/server/services/*.js medassist/server/agents/*.js; do
+            node --check "$f" || exit 1
+          done
+
+  # ── 3. Deploy frontend to Vercel (main only, after CI passes) ───────────────
+  deploy-frontend:
+    name: Deploy Frontend → Vercel
+    runs-on: ubuntu-latest
+    needs: [build-frontend, validate-backend]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Deploy to Vercel (production)
+        run: |
+          vercel deploy \
+            --cwd medassist/client \
+            --prod \
+            --token=${{ secrets.VERCEL_TOKEN }} \
+            --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+  # ── 4. Deploy backend to Render (main only, after CI passes) ────────────────
+  deploy-backend:
+    name: Deploy Backend → Render
+    runs-on: ubuntu-latest
+    needs: [build-frontend, validate-backend]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Trigger Render deploy hook
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}")
+          echo "Render response: $STATUS"
+          [ "$STATUS" = "200" ] || [ "$STATUS" = "201" ] || [ "$STATUS" = "202" ] || \
+            { echo "Deploy hook failed ($STATUS)"; exit 1; }
+
+      - name: Wait for backend to come online
+        run: |
+          echo "Waiting 90s for Render cold start..."
+          sleep 90
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${{ secrets.RENDER_BACKEND_URL }}/api/health")
+          echo "Health check: $STATUS"
+          [ "$STATUS" = "200" ] && echo "Backend is healthy!" || \
+            echo "WARNING: health check returned $STATUS (may still be starting)"

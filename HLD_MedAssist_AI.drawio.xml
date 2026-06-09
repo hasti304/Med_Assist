@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="MfRDvSbXy_zsVuGcnHBU">
+    <mxGraphModel dx="3833" dy="2270" grid="0" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="2400" pageHeight="1950" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=22;fontStyle=1;sketch=1;" value="MedAssist AI — High-Level Design" vertex="1">
+          <mxGeometry height="40" width="1000" x="449" y="-63" as="geometry" />
+        </mxCell>
+        <mxCell id="client" parent="1" style="ellipse;whiteSpace=wrap;html=1;sketch=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;fontSize=11;fontStyle=1;" value="Client (Browser)&#xa;React 19 · Vite · Tailwind CSS&#xa;i18next · Leaflet · Recharts&#xa;Framer Motion · Google OAuth&#xa;Vercel — medassist-phi.vercel.app" vertex="1">
+          <mxGeometry height="110" width="280" x="880" y="53" as="geometry" />
+        </mxCell>
+        <mxCell id="ann_client" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=9;fontColor=#555555;sketch=1;" value="AuthContext · useAgentStatus (SSE)&#xa;useTheme · useVoice&#xa;axios interceptor → JWT Bearer&#xa;401 → SessionExpiryModal&#xa;429 / 5xx → toast" vertex="1">
+          <mxGeometry height="90" width="230" x="1200" y="43" as="geometry" />
+        </mxCell>
+        <mxCell id="apigw" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#f5f5f5;strokeColor=#444444;strokeWidth=2;fontSize=11;fontColor=#333333;" value="&lt;b&gt;API Gateway &amp; Middleware&lt;/b&gt; — Express 5 · Node 18+ · Render · medassist-backend-1rne.onrender.com&#xa;JWT Auth (verifyToken)  ·  CORS whitelist (CLIENT_URL + localhost:5173/5174)  ·  10 MB body  ·  120 s timeout  ·  Trust proxy&#xa;Rate limiters: agentLimiter 10 POST/min · authLimiter 20/15 min · emailLimiter 3/min · pinLimiter 10/15 min  ·  Audit logging (fire-and-forget DB insert)" vertex="1">
+          <mxGeometry height="75" width="1838" x="100" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="auth" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=10;align=left;verticalAlign=top;" value="&lt;b&gt;Auth Service&lt;/b&gt;&#xa;POST /api/auth/register&#xa;POST /api/auth/login&#xa;GET  /api/auth/verify-email&#xa;POST /api/auth/forgot-password&#xa;POST /api/auth/resend-verification&#xa;Google OAuth2 verify&#xa;Magic links · 2FA (speakeasy + QR)&#xa;bcrypt 12 rounds · JWT 7 d" vertex="1">
+          <mxGeometry height="185" width="205" x="100" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="patient" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=10;align=left;verticalAlign=top;" value="&lt;b&gt;Patient Service&lt;/b&gt;&#xa;GET /api/patient/profile&#xa;PUT /api/patient/profile&#xa;&#xa;GET /api/patient/vitals/insights&#xa;  ↳ 2 h cache in&#xa;  patient_profiles.vitals_insights&#xa;  (JSONB column, skip LLM if fresh)" vertex="1">
+          <mxGeometry height="185" width="205" x="325" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="blood" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=10;align=left;verticalAlign=top;" value="&lt;b&gt;Blood Report Service&lt;/b&gt;&#xa;POST /api/blood-report/upload&#xa;  → OCR extraction (Step 1)&#xa;POST /api/blood-report/analyze&#xa;  check blood_reports.analysis cache&#xa;  → Agent pipeline (Step 2, async)&#xa;  ✓ analysis JSONB cache&#xa;  ✓ translations JSONB cache&#xa;GET  /api/blood-report/:id" vertex="1">
+          <mxGeometry height="185" width="276" x="594" y="435" as="geometry" />
+        </mxCell>
+        <mxCell id="voice" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=10;align=left;verticalAlign=top;" value="&lt;b&gt;Voice Service&lt;/b&gt;&#xa;POST /api/voice/speak&#xa;POST /api/voice/narrate-report&#xa;&#xa;→ ElevenLabs API&#xa;  Model: eleven_turbo_v2&#xa;  Voice: fixed voice ID&#xa;  W1TKxm4MpGXSlpN7iVQy" vertex="1">
+          <mxGeometry height="185" width="258" x="933" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="adminshared" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=10;align=left;verticalAlign=top;" value="&lt;b&gt;Admin / Shared Service&lt;/b&gt;&#xa;GET /api/admin/dashboard&#xa;  (admin role only)&#xa;GET /api/shared/:token&#xa;  PIN-protected report link&#xa;GET /api/agent/logs/:sessionId&#xa;  tool call audit trail&#xa;Audit trail DB queries" vertex="1">
+          <mxGeometry height="185" width="215" x="1245" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="sse" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontSize=10;align=left;verticalAlign=top;" value="&lt;b&gt;SSE Handler&lt;/b&gt;&#xa;GET /api/agent/status/:sessionId&#xa;Content-Type: text/event-stream&#xa;&#xa;Events emitted:&#xa;  connected · step · done&#xa;&#xa;step payload:&#xa;  tool · args · result · timestamp&#xa;Auto-close on timeout or done" vertex="1">
+          <mxGeometry height="185" width="215" x="1480" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="sesscache" parent="1" style="ellipse;whiteSpace=wrap;html=1;sketch=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=10;" value="&lt;b&gt;Session EventEmitter Cache&lt;/b&gt;&#xa;in-memory Map&#xa;&lt;sessionId, EventEmitter&gt;&#xa;TTL: 10 min auto-cleanup&#xa;Shared: SSE ↔ Agent Runner" vertex="1">
+          <mxGeometry height="150" width="215" x="1715" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="bg" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;fontSize=10;align=left;verticalAlign=top;" value="&lt;b&gt;Background Services&lt;/b&gt;&#xa;&#xa;Reminder Cron (every 1 hr):&#xa;  poll reminders WHERE sent=false&#xa;  AND send_at &lt;= NOW()&#xa;  mark sent=true after send&#xa;&#xa;Email Service (priority order):&#xa;  1. Gmail API (OAuth2)&#xa;  2. Brevo SMTP API&#xa;  3. Resend API&#xa;  4. Nodemailer SMTP (dev)&#xa;&#xa;PDF Generator (Puppeteer-core +&#xa;  @sparticuz/chromium + pdfkit):&#xa;  Clinical summary · Findings&#xa;  Medications · Diet plan&#xa;  Supplements · Risk score&#xa;  Bilingual EN/ES · Color badges&#xa;&#xa;DB Migrations (on startup)" vertex="1">
+          <mxGeometry height="320" width="320" x="100" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="ensemble" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#fce4ec;strokeColor=#b85450;strokeWidth=2;fontSize=10;align=left;verticalAlign=top;" value="&lt;b&gt;Ensemble Runner&lt;/b&gt; (AI Agent Layer)&#xa;agentRunner.js · ensembleRunner.js · aiClients.js&#xa;MAX_TURNS=6 · INTER_TURN_DELAY=500 ms&#xa;Promise.allSettled() — parallel across providers&#xa;&#xa;Agents:&#xa;  Blood Report Agent  →  4-phase pipeline:&#xa;    Phase 1: tool calls (get_lab_reference_range ×3 max)&#xa;    Phase 2a: medical ensemble (summary + abnormal_findings)&#xa;    Phase 2b: lifestyle ensemble (diet_plan + supplements)&#xa;    Phase 3: consensus merge + JSON repair&#xa;  Risk Scoring Agent  →  composite health score 0–100&#xa;  Follow-Up Agent     →  top 3 next tests + recheck timing&#xa;&#xa;Tool calls: get_lab_reference_range&#xa;  OpenFDA drug info · RxNorm drug interactions&#xa;Fallback: strip tools on tool_use_failed (HTTP 400)&#xa;emit step events → Session EventEmitter Cache (SSE)" vertex="1">
+          <mxGeometry height="310" width="520" x="440" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="ratecache" parent="1" style="ellipse;whiteSpace=wrap;html=1;sketch=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=10;" value="&lt;b&gt;Provider Rate Limit Cache&lt;/b&gt;&#xa;in-memory Map&#xa;&lt;provider, {blockedAt, ttl}&gt;&#xa;RPM 429 → block 3 min&#xa;Daily quota 429 → block 5 min&#xa;x-should-retry:false → skip now" vertex="1">
+          <mxGeometry height="160" width="220" x="980" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="ocr" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;fontSize=10;align=left;verticalAlign=top;" value="&lt;b&gt;OCR Service&lt;/b&gt; (geminiService.js)&#xa;Text PDF → pdf-parse → LLM parser&#xa;Scanned PDF → pdftoppm → JPEG&#xa;  → OpenRouter Vision (primary)&#xa;  → Gemini Vision (if GEMINI_API_KEY)&#xa;JPEG / PNG → Vision model directly&#xa;Saves → blood_reports.extracted_values" vertex="1">
+          <mxGeometry height="175" width="295" x="1220" y="745" as="geometry" />
+        </mxCell>
+        <mxCell id="helicone" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#fff9c4;strokeColor=#d6b656;strokeWidth=2;fontSize=10;dashed=1;" value="&lt;b&gt;Helicone&lt;/b&gt; (optional)&#xa;Observability proxy&#xa;if HELICONE_API_KEY set&#xa;helicone.ai/dashboard" vertex="1">
+          <mxGeometry height="75" width="200" x="440" y="1090" as="geometry" />
+        </mxCell>
+        <mxCell id="samba" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#fff9c4;strokeColor=#d6b656;strokeWidth=2;fontSize=10;" value="&lt;b&gt;SambaNova&lt;/b&gt;&#xa;Llama-3.3-70B&#xa;Free · no monthly cap&#xa;Tool-calling ✓&#xa;Priority 1" vertex="1">
+          <mxGeometry height="90" width="175" x="660" y="1090" as="geometry" />
+        </mxCell>
+        <mxCell id="github_m" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#fff9c4;strokeColor=#d6b656;strokeWidth=2;fontSize=10;" value="&lt;b&gt;GitHub Models&lt;/b&gt;&#xa;GPT-4o mini&#xa;Free via PAT&#xa;Tool-calling ✓&#xa;Priority 2" vertex="1">
+          <mxGeometry height="90" width="175" x="855" y="1090" as="geometry" />
+        </mxCell>
+        <mxCell id="openrouter" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#fff9c4;strokeColor=#d6b656;strokeWidth=2;fontSize=10;" value="&lt;b&gt;OpenRouter&lt;/b&gt;&#xa;DeepSeek/Gemma/Llama&#xa;Free tier&#xa;Vision models ✓&#xa;Priority 3" vertex="1">
+          <mxGeometry height="90" width="175" x="1050" y="1090" as="geometry" />
+        </mxCell>
+        <mxCell id="cerebras" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#fff9c4;strokeColor=#d6b656;strokeWidth=2;fontSize=10;" value="&lt;b&gt;Cerebras&lt;/b&gt;&#xa;Qwen-235B&#xa;Free · RPM-limited&#xa;Last-resort fallback&#xa;Priority 4" vertex="1">
+          <mxGeometry height="90" width="175" x="1245" y="1090" as="geometry" />
+        </mxCell>
+        <mxCell id="judge" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;fontSize=10;" value="&lt;b&gt;Consensus Judge&lt;/b&gt;&#xa;Primary: OpenAI GPT-4o (paid)&#xa;Fallback: SambaNova → GitHub Models&#xa;Task-specific merge instructions (blood_analysis · test_recommendations · drug_interactions)&#xa;Outputs: merged JSON · consensus_count · confidence · JSON repair for truncated responses" vertex="1">
+          <mxGeometry height="100" width="680" x="395" y="1245" as="geometry" />
+        </mxCell>
+        <mxCell id="postgres" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;sketch=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;fontSize=10;" value="&lt;b&gt;PostgreSQL — Supabase&lt;/b&gt;&#xa;users · patient_profiles (vitals_insights cache 2h)&#xa;blood_reports (analysis + translations JSONB cache)&#xa;agent_logs · medication_logs · reminders · supplement_logs&#xa;doctor_profiles · audit_trail · email_verification_tokens · magic_link_tokens&#xa;SSL rejectUnauthorized=false · JWT-secured row access · HIPAA audit trail" vertex="1">
+          <mxGeometry height="210" width="560" x="100" y="1380" as="geometry" />
+        </mxCell>
+        <mxCell id="extapis" parent="1" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;fontSize=10;align=left;verticalAlign=top;" value="&lt;b&gt;External APIs&lt;/b&gt;&#xa;OpenFDA — drug info (240 RPM, no key)&#xa;RxNorm (NIH) — drug interaction checking&#xa;ElevenLabs — TTS eleven_turbo_v2 (ELEVENLABS_API_KEY)&#xa;Google OAuth2 — client sign-in + Gmail token refresh&#xa;OpenStreetMap / Overpass API — maps (no key)&#xa;pdftoppm — PDF→JPEG conversion (system binary, Linux/Render)&#xa;Gemini Vision — PDF OCR fallback (GEMINI_API_KEY)" vertex="1">
+          <mxGeometry height="195" width="610" x="780" y="1395" as="geometry" />
+        </mxCell>
+        <mxCell id="ann_bloodcache" parent="1" style="text;html=1;strokeColor=#b85450;fillColor=#fff0f0;align=left;fontSize=9;fontColor=#b85450;sketch=1;rounded=1;" value="blood_reports.analysis (JSONB)&#xa;if cached + force=false → skip agent&#xa;blood_reports.translations (JSONB)&#xa;cleared on re-analysis" vertex="1">
+          <mxGeometry height="59" width="165" x="1262" y="129" as="geometry" />
+        </mxCell>
+        <mxCell id="e_c_gw" edge="1" parent="1" source="client" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontStyle=1;fontSize=11;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="apigw" value="HTTPS / REST API + JWT">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_gw_auth" edge="1" parent="1" source="apigw" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="auth" value="/api/auth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_gw_pat" edge="1" parent="1" source="apigw" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="patient" value="/api/patient">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1019" y="349" />
+              <mxPoint x="427" y="349" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_gw_blood" edge="1" parent="1" source="apigw" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="blood" value="/api/blood-report">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_gw_voice" edge="1" parent="1" source="apigw" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="voice" value="/api/voice">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_gw_admin" edge="1" parent="1" source="apigw" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="adminshared" value="/api/admin · /api/shared">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1019" y="390" />
+              <mxPoint x="1353" y="390" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_gw_sse" edge="1" parent="1" source="apigw" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="sse" value="/api/agent/status">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1019" y="361" />
+              <mxPoint x="1587" y="361" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_sse_sc" edge="1" parent="1" source="sse" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="sesscache" value="subscribe EventEmitter">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_sc_client" edge="1" parent="1" source="sesscache" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=-0.01;exitY=0.429;exitDx=0;exitDy=0;exitPerimeter=0;" target="client" value="SSE push: step / done">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1438" y="513" />
+              <mxPoint x="1438" y="108" />
+            </Array>
+            <mxPoint x="1696" y="513" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_blood_ens" edge="1" parent="1" source="blood" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="ensemble" value="runBloodReportAgent()&#xa;runRiskScoringAgent()">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="746" y="626" />
+              <mxPoint x="746" y="626" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_ens_rc" edge="1" parent="1" source="ensemble" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;exitX=0.998;exitY=0.456;exitDx=0;exitDy=0;exitPerimeter=0;" target="ratecache" value="track 429 responses">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_ens_sc" edge="1" parent="1" source="ensemble" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;exitX=0.924;exitY=0.007;exitDx=0;exitDy=0;exitPerimeter=0;" target="sesscache" value="emit step events">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="921" y="730" />
+              <mxPoint x="918" y="730" />
+              <mxPoint x="918" y="720" />
+              <mxPoint x="1823" y="720" />
+            </Array>
+            <mxPoint x="920" y="732" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_ens_heli" edge="1" parent="1" source="ensemble" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;dashed=1;endArrow=open;" target="helicone" value="optional proxy">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_ens_samba" edge="1" parent="1" source="ensemble" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="samba" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_ens_gh" edge="1" parent="1" source="ensemble" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="github_m" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_ens_or" edge="1" parent="1" source="ensemble" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="openrouter" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_ens_cer" edge="1" parent="1" source="ensemble" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;exitX=0.978;exitY=0.038;exitDx=0;exitDy=0;exitPerimeter=0;" target="cerebras" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="949" y="736" />
+              <mxPoint x="1204" y="736" />
+              <mxPoint x="1204" y="1066" />
+              <mxPoint x="1333" y="1066" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_ocr_or" edge="1" parent="1" source="ocr" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="openrouter" value="vision models (JPEG)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1368" y="1005" />
+              <mxPoint x="1166" y="1005" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_samba_j" edge="1" parent="1" source="samba" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="judge" value="response">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="675" y="1212" />
+              <mxPoint x="677" y="1212" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_gh_j" edge="1" parent="1" source="github_m" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="judge" value="response">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_or_j" edge="1" parent="1" source="openrouter" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="judge" value="response">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1137" y="1193" />
+              <mxPoint x="633" y="1193" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_j_pg" edge="1" parent="1" source="judge" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;entryX=0.577;entryY=0.006;entryDx=0;entryDy=0;entryPerimeter=0;" target="postgres" value="save merged analysis&#xa;auto-populate medication_logs">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_auth_pg" edge="1" parent="1" source="auth" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="postgres" value="users · tokens">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="22" y="523" />
+              <mxPoint x="22" y="998" />
+              <mxPoint x="203" y="998" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_pat_pg" edge="1" parent="1" source="patient" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="postgres" value="patient_profiles">
+          <mxGeometry relative="1" x="-0.011" y="3" as="geometry">
+            <mxPoint x="1" as="offset" />
+            <Array as="points">
+              <mxPoint x="412" y="997" />
+              <mxPoint x="380" y="997" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_blood_pg" edge="1" parent="1" source="blood" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;exitX=0.014;exitY=0.795;exitDx=0;exitDy=0;exitPerimeter=0;" value="cache check · save report">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="307" y="577" />
+            </Array>
+            <mxPoint x="768" y="577" as="sourcePoint" />
+            <mxPoint x="307" y="1381" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_admin_pg" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="postgres" value="audit_trail · agent_logs">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="360" y="564" />
+            </Array>
+            <mxPoint x="1243.95" y="563.9961904761903" as="sourcePoint" />
+            <mxPoint x="365" y="1422" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_bg_pg" edge="1" parent="1" source="bg" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="postgres" value="poll reminders · mark sent=true">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="1295" />
+              <mxPoint x="260" y="1295" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_bg_ext" edge="1" parent="1" source="bg" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="extapis" value="send email (Gmail OAuth2 → Brevo → Resend)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1057" y="906" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_voice_ext" edge="1" parent="1" source="voice" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="extapis" value="ElevenLabs TTS API">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1012" y="523" />
+              <mxPoint x="1012" y="1005" />
+              <mxPoint x="1085" y="1005" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_auth_ext" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;dashed=1;" target="extapis" value="Google OAuth2 verify">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1188" y="553" />
+            </Array>
+            <mxPoint x="304" y="552.9961904761903" as="sourcePoint" />
+            <mxPoint x="1084" y="1425.52" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_ens_ext" edge="1" parent="1" source="ensemble" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;" target="extapis" value="tool calls: OpenFDA · RxNorm">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="700" y="1229" />
+              <mxPoint x="1020" y="1229" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_ocr_ext" edge="1" parent="1" source="ocr" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;dashed=1;" target="extapis" value="Gemini Vision (fallback)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1461" y="1237" />
+              <mxPoint x="1136" y="1237" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jlQA2OJjop_uNjSLdQ5k-10" edge="1" parent="1" source="blood" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;exitX=1.01;exitY=0.598;exitDx=0;exitDy=0;exitPerimeter=0;" value="upload → OCR extraction">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1038" y="544.9961904761903" as="sourcePoint" />
+            <mxPoint x="1405" y="748" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jlQA2OJjop_uNjSLdQ5k-13" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;sketch=1;fontSize=9;dashed=1;" value="Google OAuth2 verify">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1214" y="564" />
+            </Array>
+            <mxPoint x="330" y="563.9961904761903" as="sourcePoint" />
+            <mxPoint x="1214" y="1393" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jlQA2OJjop_uNjSLdQ5k-17" edge="1" parent="1" source="ann_bloodcache" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="jlQA2OJjop_uNjSLdQ5k-18" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="1211" y="186" />
+              <mxPoint x="1287" y="386" />
+            </Array>
+            <mxPoint x="1179" y="322" as="sourcePoint" />
+            <mxPoint x="1229" y="272" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jlQA2OJjop_uNjSLdQ5k-18" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" value="" vertex="1">
+          <mxGeometry height="53" width="173" x="931" y="432" as="geometry" />
+        </mxCell>
+        <mxCell id="jlQA2OJjop_uNjSLdQ5k-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;" value="" vertex="1">
+          <mxGeometry height="1716" width="2208" x="-217" y="-89" as="geometry" />
+        </mxCell>
+        <mxCell id="jlQA2OJjop_uNjSLdQ5k-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeWidth=4;" value="" vertex="1">
+          <mxGeometry height="60" width="597" x="645" y="-75" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
