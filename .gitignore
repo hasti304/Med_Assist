@@ -1,0 +1,53 @@
+# ===========================
+# Project Root Ignores
+# ===========================
+
+# Word/temp files (from project proposal docs)
+~$*.doc
+~$*.docx
+~$*.xlsx
+details.txt
+*.claude
+
+# Personal notes & AI conversation logs
+LLM_history_risk_mittigation.txt
+suggestions.md
+
+# Dependencies
+node_modules/
+medassist/client/node_modules/
+medassist/server/node_modules/
+
+# Environment & Secrets
+.env
+*.env
+medassist/server/.env
+medassist/client/.env
+
+# Build outputs
+medassist/client/dist/
+
+# Uploaded files (user data — never commit)
+medassist/server/uploads/
+uploads/
+
+# Large media files (exceed GitHub's 100 MB limit)
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Claude Code
+.claude/

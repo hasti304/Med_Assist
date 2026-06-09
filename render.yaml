@@ -1,0 +1,66 @@
+## Render.com — Backend only (frontend is on Vercel)
+## Docs: https://render.com/docs/blueprint-spec
+##
+## After connecting this repo in Render dashboard, set these env vars:
+##   DATABASE_URL, JWT_SECRET, CEREBRAS_API_KEY, SAMBANOVA_API_KEY,
+##   OPENROUTER_API_KEY, GITHUB_TOKEN, HELICONE_API_KEY,
+##   CLIENT_URL (= your Vercel frontend URL), GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET,
+##   SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS,
+##   ELEVENLABS_API_KEY, OPENFDA_API_KEY
+
+services:
+  - type: web
+    name: medassist-backend
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: medassist/server
+    buildCommand: npm ci
+    startCommand: node index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      # Secrets — set in Render dashboard (Environment tab)
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CEREBRAS_API_KEY
+        sync: false
+      - key: SAMBANOVA_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: HELICONE_API_KEY
+        sync: false
+      # CLIENT_URL = your Vercel frontend URL, e.g. https://medassist.vercel.app
+      - key: CLIENT_URL
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_SECURE
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: OPENFDA_API_KEY
+        sync: false
+      # MyMemory translation — 10,000 words/day each, combined 20,000/day
+      - key: MYMEMORY_EMAIL
+        sync: false
+      - key: MYMEMORY_EMAIL_2
+        sync: false
